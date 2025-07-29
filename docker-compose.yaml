@@ -6,12 +6,20 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./docker/traefik/acme.json:/acme.json
       - ./docker/traefik/traefik.toml:/etc/traefik/traefik.toml
     networks:
       - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.josemokeni.cloud`)"
+      - "traefik.http.routers.dashboard.tls.certresolver=leresolver"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$NpYg5jk610mgR1X3eGRQvegQcN3fs7GdEmY71sSMiK880cTOehBi6"
 
 networks:
   traefik-public:
